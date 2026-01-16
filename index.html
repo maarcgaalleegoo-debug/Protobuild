@@ -2,88 +2,113 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Protobuild3D | Objetos 3D Profesionales</title>
+  <title>Protobuild3D | Plataforma Profesional 3D</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root{
-      --bg:#0b0f1a; --card:#12172a; --accent:#4cc9f0; --accent2:#4361ee; --text:#e6e6eb;
+      --bg:#070b16; --panel:#0e1428; --card:#141b3a;
+      --accent:#4cc9f0; --accent2:#4361ee; --text:#e9ecf1; --muted:#9aa4c7;
     }
-    *{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
-    body{margin:0;background:linear-gradient(120deg,#0b0f1a,#0e1430);color:var(--text)}
-    header{padding:20px 40px;display:flex;justify-content:space-between;align-items:center}
-    header h1{color:var(--accent)}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Arial}
+    body{margin:0;background:radial-gradient(circle at top,#10163a,#070b16);color:var(--text)}
+
+    header{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background:rgba(10,15,40,.6);backdrop-filter:blur(10px);position:sticky;top:0;z-index:10}
+    header h1{margin:0;color:var(--accent)}
     nav a{margin-left:20px;color:#fff;text-decoration:none;font-weight:500}
     nav a:hover{color:var(--accent)}
 
-    .container{padding:40px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px}
-    .card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
-    .card img{width:100%;border-radius:12px}
-    .btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#000;padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer}
-    .btn.alt{background:#222;color:#fff}
+    .container{padding:40px;max-width:1300px;margin:auto}
+    h2{color:var(--accent)}
 
-    footer{background:#060914;padding:40px;margin-top:60px}
-    footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px}
-    footer a{color:#aaa;text-decoration:none;font-size:14px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px}
+    .card{background:linear-gradient(180deg,var(--card),#0b1030);border-radius:18px;padding:22px;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+    .card img{width:100%;border-radius:14px;margin-bottom:12px}
+
+    .btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#000;padding:12px 18px;border-radius:12px;font-weight:700;cursor:pointer}
+    .btn.alt{background:#1a2045;color:#fff}
+    .btn.danger{background:#5a1d2e;color:#fff}
+
+    input,textarea{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0;background:#0b1130;color:#fff}
+
+    footer{background:#040715;padding:50px;margin-top:80px}
+    footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:30px}
+    footer a{color:var(--muted);text-decoration:none;font-size:14px}
 
     .hidden{display:none}
-    input,textarea{width:100%;padding:10px;border-radius:8px;border:none;margin:8px 0}
-    h2{color:var(--accent)}
+    .center{text-align:center}
+    .avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)}
   </style>
 </head>
 <body>
 <header>
   <h1>Protobuild3D</h1>
-  <nav>
-    <a href="#" onclick="showSection('catalogo')">Catálogo</a>
-    <a href="#" onclick="showSection('about')">Quiénes somos</a>
-    <a href="#" onclick="showSection('perfil')">Perfil</a>
-    <a href="#" onclick="showSection('login')">Login</a>
+  <nav id="nav" class="hidden">
+    <a href="#" onclick="show('catalogo')">Catálogo</a>
+    <a href="#" onclick="show('about')">Quiénes somos</a>
+    <a href="#" onclick="show('perfil')">Perfil</a>
+    <a href="#" onclick="logout()">Cerrar sesión</a>
   </nav>
 </header>
 
 <div class="container">
 
-  <!-- LOGIN -->
-  <section id="login" class="card">
-    <h2>Inicio de sesión / Registro</h2>
-    <input id="email" placeholder="Correo" />
-    <input id="pass" type="password" placeholder="Contraseña" />
-    <input id="adminCode" placeholder="Código admin (opcional)" />
-    <button class="btn" onclick="login()">Entrar</button>
-  </section>
+<!-- LOGIN -->
+<section id="login" class="card center">
+  <h2>Acceso a Protobuild3D</h2>
+  <input id="email" placeholder="Correo electrónico" />
+  <input id="pass" type="password" placeholder="Contraseña" />
+  <input id="adminCode" placeholder="Código admin / owner (opcional)" />
+  <button class="btn" onclick="login()">Iniciar sesión</button>
+  <p style="margin-top:20px;color:var(--muted)">Login con Google (demo visual)</p>
+  <button class="btn alt" onclick="googleLogin()">Continuar con Google</button>
+</section>
 
-  <!-- CATALOGO -->
-  <section id="catalogo" class="hidden">
-    <h2>Catálogo 3D</h2>
-    <div class="grid" id="products"></div>
-  </section>
+<!-- CATALOGO -->
+<section id="catalogo" class="hidden">
+  <h2>Catálogo 3D</h2>
+  <div class="grid" id="products"></div>
+</section>
 
-  <!-- ABOUT -->
-  <section id="about" class="hidden card">
-    <h2>Quiénes somos</h2>
-    <p>Protobuild3D es una marca especializada en el diseño y fabricación de objetos 3D de alta calidad, orientados a la tecnología, prototipado y diseño moderno.</p>
-  </section>
+<!-- ABOUT -->
+<section id="about" class="hidden">
+  <div class="grid">
+    <div class="card">
+      <h2>Nuestro origen</h2>
+      <p>Protobuild3D nace con la visión de fusionar tecnología, diseño y fabricación avanzada mediante impresión 3D profesional.</p>
+    </div>
+    <div class="card">
+      <h2>Aspiraciones</h2>
+      <p>Queremos convertirnos en una referencia europea en soluciones 3D personalizadas, accesibles y de alta calidad.</p>
+    </div>
+    <div class="card">
+      <h2>Nuestra misión</h2>
+      <p>Impulsar la innovación creando objetos funcionales, estéticos y duraderos con procesos tecnológicos de última generación.</p>
+    </div>
+  </div>
+</section>
 
-  <!-- PERFIL -->
-  <section id="perfil" class="hidden card">
-    <h2>Perfil</h2>
-    <p id="role"></p>
-    <button class="btn alt" onclick="logout()">Cerrar sesión</button>
-  </section>
+<!-- PERFIL -->
+<section id="perfil" class="hidden card center">
+  <img id="avatar" class="avatar" src="https://via.placeholder.com/150" />
+  <input id="avatarUrl" placeholder="URL foto de perfil" />
+  <input id="pname" placeholder="Nombre" />
+  <input id="pcontact" placeholder="Datos de contacto" />
+  <p id="role"></p>
+  <button class="btn" onclick="saveProfile()">Guardar perfil</button>
+</section>
 
-  <!-- ADMIN -->
-  <section id="admin" class="hidden card">
-    <h2>Panel Admin / Owner</h2>
-    <p>Editar productos y contacto</p>
-    <input id="pname" placeholder="Nombre producto" />
-    <input id="pprice" placeholder="Precio" />
-    <input id="pimg" placeholder="URL imagen" />
-    <button class="btn" onclick="addProduct()">Añadir producto</button>
-    <hr />
-    <input id="contact" placeholder="Correo de contacto" />
-    <button class="btn" onclick="saveContact()">Guardar contacto</button>
-  </section>
+<!-- ADMIN / OWNER -->
+<section id="admin" class="hidden card">
+  <h2>Panel de gestión</h2>
+  <h3>Productos</h3>
+  <input id="prodName" placeholder="Nombre producto" />
+  <input id="prodPrice" placeholder="Precio" />
+  <input id="prodImg" placeholder="URL imagen" />
+  <button class="btn" onclick="addProduct()">Añadir producto</button>
+  <h3 style="margin-top:20px">Contacto</h3>
+  <input id="contact" placeholder="Correo de pedidos" />
+  <button class="btn" onclick="saveContact()">Guardar contacto</button>
+</section>
 
 </div>
 
@@ -102,56 +127,115 @@
 </footer>
 
 <script>
-  const OWNER_CODE = 'MLM_1234pro'
-  let role = null
-  let contactEmail = 'maarcgaalleegoo@gmail.com'
+  const OWNER_CODE='MLM_1234pro'
+  let ownerFails=0
+  let role=null
+  let contactEmail='maarcgaalleegoo@gmail.com'
 
-  let products = [
-    {name:'Soporte 3D Tech',price:25,img:'https://via.placeholder.com/400x300'}
-  ]
+  let products=[{name:'Soporte Modular 3D',price:29,img:'https://via.placeholder.com/400x300'}]
 
-  function showSection(id){
-    document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'))
-    document.getElementById(id).classList.remove('hidden')
-  }
+  function show(id){document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
 
   function login(){
-    const code = adminCode.value
-    if(code === OWNER_CODE) role='owner'
-    else if(code) role='admin'
-    else role='user'
+    const code=adminCode.value
+    if(code===OWNER_CODE){
+      role='owner'
+    }else if(code){
+      role='admin'
+    }else role='user'
 
-    document.getElementById('role').innerText = 'Rol: '+role
-    showSection('catalogo')
+    if(code && code!==OWNER_CODE && code.length>0){}
+    if(code && code!==OWNER_CODE && role!=='admin'){}
+
+    if(code!=='' && code!==OWNER_CODE && role!=='admin'){}
+
+    if(code!=='' && code!==OWNER_CODE && code!=='' && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    if(code!=='' && code!==OWNER_CODE && role==='user'){}
+
+    document.getElementById('nav').classList.remove('hidden')
+    document.getElementById('role').innerText='Rol: '+role
+    show('catalogo')
     if(role!=='user') document.getElementById('admin').classList.remove('hidden')
+    render()
+  }
+
+  function googleLogin(){
+    role='user'
+    document.getElementById('nav').classList.remove('hidden')
+    document.getElementById('role').innerText='Rol: usuario (Google)'
+    show('catalogo')
   }
 
   function logout(){location.reload()}
 
   function render(){
-    const c = document.getElementById('products')
-    c.innerHTML=''
-    products.forEach(p=>{
-      c.innerHTML += `<div class="card"><img src="${p.img}"><h3>${p.name}</h3><p>${p.price} €</p><button class="btn" onclick="order('${p.name}',${p.price})">Pedir</button></div>`
+    const c=document.getElementById('products');c.innerHTML=''
+    products.forEach((p,i)=>{
+      c.innerHTML+=`<div class="card"><img src="${p.img}"><h3>${p.name}</h3><p>${p.price} €</p><button class="btn" onclick="order('${p.name}',${p.price})">Pedir</button>${role==='owner'?`<button class='btn danger' onclick='del(${i})'>Eliminar</button>`:''}</div>`
     })
   }
 
-  function addProduct(){
-    products.push({name:pname.value,price:pprice.value,img:pimg.value})
-    render()
-  }
+  function addProduct(){products.push({name:prodName.value,price:prodPrice.value,img:prodImg.value});render()}
+  function del(i){products.splice(i,1);render()}
+  function saveContact(){contactEmail=contact.value;contactShow.innerText='Contacto: '+contactEmail}
 
-  function saveContact(){
-    contactEmail = contact.value
-    document.getElementById('contactShow').innerText = 'Contacto: '+contactEmail
+  function saveProfile(){
+    avatar.src=avatarUrl.value||avatar.src
   }
 
   function order(name,price){
-    const body = `Pedido Protobuild3D:%0AProducto: ${name}%0APrecio: ${price} €%0APago en persona.`
-    window.location = `mailto:${contactEmail}?subject=Nuevo pedido Protobuild3D&body=${body}`
+    const body=`Pedido Protobuild3D:%0AProducto: ${name}%0APrecio: ${price} €%0APago en persona.`
+    window.location=`mailto:${contactEmail}?subject=Nuevo pedido Protobuild3D&body=${body}`
   }
-
-  render()
 </script>
 </body>
 </html>
