@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Protobuild3D | Objetos 3D Profesionales</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root{
+      --bg:#0b0f1a; --card:#12172a; --accent:#4cc9f0; --accent2:#4361ee; --text:#e6e6eb;
+    }
+    *{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
+    body{margin:0;background:linear-gradient(120deg,#0b0f1a,#0e1430);color:var(--text)}
+    header{padding:20px 40px;display:flex;justify-content:space-between;align-items:center}
+    header h1{color:var(--accent)}
+    nav a{margin-left:20px;color:#fff;text-decoration:none;font-weight:500}
+    nav a:hover{color:var(--accent)}
+
+    .container{padding:40px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px}
+    .card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+    .card img{width:100%;border-radius:12px}
+    .btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#000;padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer}
+    .btn.alt{background:#222;color:#fff}
+
+    footer{background:#060914;padding:40px;margin-top:60px}
+    footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px}
+    footer a{color:#aaa;text-decoration:none;font-size:14px}
+
+    .hidden{display:none}
+    input,textarea{width:100%;padding:10px;border-radius:8px;border:none;margin:8px 0}
+    h2{color:var(--accent)}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Protobuild3D</h1>
+  <nav>
+    <a href="#" onclick="showSection('catalogo')">Catálogo</a>
+    <a href="#" onclick="showSection('about')">Quiénes somos</a>
+    <a href="#" onclick="showSection('perfil')">Perfil</a>
+    <a href="#" onclick="showSection('login')">Login</a>
+  </nav>
+</header>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <section id="login" class="card">
+    <h2>Inicio de sesión / Registro</h2>
+    <input id="email" placeholder="Correo" />
+    <input id="pass" type="password" placeholder="Contraseña" />
+    <input id="adminCode" placeholder="Código admin (opcional)" />
+    <button class="btn" onclick="login()">Entrar</button>
+  </section>
+
+  <!-- CATALOGO -->
+  <section id="catalogo" class="hidden">
+    <h2>Catálogo 3D</h2>
+    <div class="grid" id="products"></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="hidden card">
+    <h2>Quiénes somos</h2>
+    <p>Protobuild3D es una marca especializada en el diseño y fabricación de objetos 3D de alta calidad, orientados a la tecnología, prototipado y diseño moderno.</p>
+  </section>
+
+  <!-- PERFIL -->
+  <section id="perfil" class="hidden card">
+    <h2>Perfil</h2>
+    <p id="role"></p>
+    <button class="btn alt" onclick="logout()">Cerrar sesión</button>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="admin" class="hidden card">
+    <h2>Panel Admin / Owner</h2>
+    <p>Editar productos y contacto</p>
+    <input id="pname" placeholder="Nombre producto" />
+    <input id="pprice" placeholder="Precio" />
+    <input id="pimg" placeholder="URL imagen" />
+    <button class="btn" onclick="addProduct()">Añadir producto</button>
+    <hr />
+    <input id="contact" placeholder="Correo de contacto" />
+    <button class="btn" onclick="saveContact()">Guardar contacto</button>
+  </section>
+
+</div>
+
+<footer>
+  <div class="cols">
+    <div>
+      <h3>Protobuild3D</h3>
+      <p id="contactShow">Contacto: maarcgaalleegoo@gmail.com</p>
+    </div>
+    <div>
+      <a href="#">Términos y condiciones</a><br />
+      <a href="#">Política de privacidad</a><br />
+      <a href="#">Aviso legal</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const OWNER_CODE = 'MLM_1234pro'
+  let role = null
+  let contactEmail = 'maarcgaalleegoo@gmail.com'
+
+  let products = [
+    {name:'Soporte 3D Tech',price:25,img:'https://via.placeholder.com/400x300'}
+  ]
+
+  function showSection(id){
+    document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'))
+    document.getElementById(id).classList.remove('hidden')
+  }
+
+  function login(){
+    const code = adminCode.value
+    if(code === OWNER_CODE) role='owner'
+    else if(code) role='admin'
+    else role='user'
+
+    document.getElementById('role').innerText = 'Rol: '+role
+    showSection('catalogo')
+    if(role!=='user') document.getElementById('admin').classList.remove('hidden')
+  }
+
+  function logout(){location.reload()}
+
+  function render(){
+    const c = document.getElementById('products')
+    c.innerHTML=''
+    products.forEach(p=>{
+      c.innerHTML += `<div class="card"><img src="${p.img}"><h3>${p.name}</h3><p>${p.price} €</p><button class="btn" onclick="order('${p.name}',${p.price})">Pedir</button></div>`
+    })
+  }
+
+  function addProduct(){
+    products.push({name:pname.value,price:pprice.value,img:pimg.value})
+    render()
+  }
+
+  function saveContact(){
+    contactEmail = contact.value
+    document.getElementById('contactShow').innerText = 'Contacto: '+contactEmail
+  }
+
+  function order(name,price){
+    const body = `Pedido Protobuild3D:%0AProducto: ${name}%0APrecio: ${price} €%0APago en persona.`
+    window.location = `mailto:${contactEmail}?subject=Nuevo pedido Protobuild3D&body=${body}`
+  }
+
+  render()
+</script>
+</body>
+</html>
